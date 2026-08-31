@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { ZenviaLogo, UserBadge } from "@/components/branding";
-import { LogoutButton } from "@/features/auth/components/LogoutButton";
+import { ZenviaLogo } from "@/components/branding";
+import { UserProfileMenu } from "@/components/user-profile-menu";
 import { MobileNav } from "@/components/MobileNav";
 import { NotificationBell } from "@/features/notifications/components/notification-bell";
+import { MessageBell } from "@/features/messaging/components/message-bell";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getCurrentUser } from "@/lib/auth-helpers";
 import {
@@ -107,12 +108,12 @@ export default async function DashboardLayout({
                 )}
             </nav>
 
-            {/* Acciones de usuario a la derecha */}
-            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+            {/* Acciones de usuario a la derecha (Notificaciones, Mensajes, Menú Perfil y Tema) */}
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <ThemeToggle />
-              <div className="hidden xl:block"><NotificationBell /></div>
-              <div className="hidden lg:block"><UserBadge /></div>
-              <div className="hidden xl:block"><LogoutButton /></div>
+              <div className="hidden sm:block"><NotificationBell /></div>
+              <div className="hidden sm:block"><MessageBell /></div>
+              {user && <UserProfileMenu user={user} />}
               {/* El menú se activa también al reducir el espacio mediante zoom. */}
               <div className="xl:hidden">
                 <MobileNav canManageUsers={canManageUsers} />

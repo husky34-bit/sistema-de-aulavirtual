@@ -2,21 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getUnreadCount } from '../actions/notification-actions';
+import { getUnreadMessagesCount } from '../actions/messaging-actions';
 
-// Campana de notificaciones con badge de contador. Hace polling cada 30s.
-export function NotificationBell() {
+export function MessageBell() {
   const [count, setCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     let active = true;
-    getUnreadCount().then((res) => {
+    getUnreadMessagesCount().then((res) => {
       if (active && res.success) setCount(res.count);
     });
 
     const interval = setInterval(() => {
-      getUnreadCount().then((res) => {
+      getUnreadMessagesCount().then((res) => {
         if (active && res.success) setCount(res.count);
       });
     }, 30000);
@@ -29,13 +28,14 @@ export function NotificationBell() {
 
   return (
     <button
-      onClick={() => router.push('/dashboard/notifications')}
+      type="button"
+      onClick={() => router.push('/dashboard/messages')}
       className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#00155C] text-white ring-1 ring-white/20 transition-all hover:bg-[#026BCA] hover:scale-105"
-      title="Notificaciones"
-      aria-label="Notificaciones"
+      title="Mensajes directos"
+      aria-label="Mensajes"
     >
       <svg
-        className="h-5 w-5"
+        className="h-4 w-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -44,11 +44,11 @@ export function NotificationBell() {
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
         />
       </svg>
       {count > 0 && (
-        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-cyan-500 px-1 text-[10px] font-bold text-slate-950 shadow-sm shadow-cyan-500/50 ring-2 ring-slate-900">
+        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#00BCE4] px-1 text-[10px] font-bold text-slate-950 shadow-xs ring-2 ring-[#00155C]">
           {count > 99 ? '99+' : count}
         </span>
       )}

@@ -118,3 +118,32 @@ export async function markRead(conversationId: string) {
   revalidatePath('/dashboard/messages');
   return { success: true as const };
 }
+
+// Obtiene el número total de mensajes no leídos del usuario
+export async function getUnreadMessagesCount() {
+  const user = await requireAuth();
+  const memberships = await prisma.conversationMember.findMany({
+    where: { userId: user.id },
+    include: {
+      conversation: {
+        include: {
+          messages: {
+            orderBy: { createdAt: 'desc' },
+            take: 1,
+          },
+        },
+      },
+    },
+  });
+
+  let unread = 0;
+  for (const m of memberships) {
+    const lastMsg = m.conversation.messages[0];
+    if (lastMsg && (!m.lastReadAt || lastMsg.createdAt > m.lastReadAt)) {
+      unread++;
+    }
+  }
+
+  return { success: true as const, count: unread };
+}
+
