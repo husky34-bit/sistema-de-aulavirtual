@@ -3,36 +3,20 @@ import { auth } from "@/auth";
 import Image from "next/image";
 
 export function ZenviaLogo({ variant = "light" }: { variant?: "light" | "dark" }) {
-  const isDark = variant === "dark";
-
+  void variant;
   return (
     <Link href="/" className="group flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95">
       {/* Cognos Logo Real */}
-      <div className="relative flex items-center">
-        {isDark ? (
-          <Image
-            src="/images/logos/LG.webp"
-            alt="Cognos Capacitación"
-            width={160}
-            height={42}
-            className="h-8 md:h-9 w-auto object-contain"
-            priority
-          />
-        ) : (
-          <Image
-            src="/images/logos/cw.webp"
-            alt="Cognos Capacitación"
-            width={160}
-            height={42}
-            className="h-8 md:h-9 w-auto object-contain"
-            priority
-          />
-        )}
+      <div className="relative flex items-center bg-white rounded-md px-2.5 py-1 shadow-sm ring-1 ring-white/20">
+        <Image
+          src="/images/logos/cognos-virtual-moodle.png"
+          alt="Cognos Virtual"
+          width={180}
+          height={48}
+          className="h-7 md:h-8 w-auto object-contain"
+          priority
+        />
       </div>
-
-      <span className="hidden sm:inline-block rounded-lg bg-[#026BCA]/20 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#00BCE4] ring-1 ring-[#00BCE4]/30 backdrop-blur-sm">
-        Aula Virtual
-      </span>
     </Link>
   );
 }

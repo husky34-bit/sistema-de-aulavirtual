@@ -45,15 +45,17 @@ body {
 .dashboard-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  border-radius: 0.65rem;
-  padding: 0.5rem 0.6rem;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.925rem;
+  font-weight: 600;
   white-space: nowrap;
   transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
 }
 
 .dashboard-nav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.14);
   color: #fff;
   transform: translateY(-1px);
 }

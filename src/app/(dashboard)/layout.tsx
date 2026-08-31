@@ -17,66 +17,76 @@ import {
 } from "@/components/Icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+import { prisma } from "@/lib/prisma";
+
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  const canManageUsers = user?.role === "ADMIN";
+  const sessionUser = await getCurrentUser();
+  const canManageUsers = sessionUser?.role === "ADMIN";
+
+  const user = sessionUser?.id
+    ? await prisma.user.findUnique({
+        where: { id: sessionUser.id },
+        select: { id: true, name: true, email: true, image: true, role: true },
+      })
+    : null;
 
   return (
     <div className="dashboard-shell min-h-screen flex flex-col justify-between">
       <div>
-        <header className="sticky top-0 z-40 border-b border-[#002147] bg-[#00155C] shadow-md shadow-[#00155C]/20">
+        {/* Header estilo Plomo / Grafito */}
+        <header className="sticky top-0 z-40 border-b border-[#212529] bg-[#2B3035] dark:bg-[#1A1E22] shadow-md">
           <div className="relative mx-auto flex w-full max-w-[1780px] items-center justify-between gap-3 px-4 py-3 sm:px-8 lg:px-12 2xl:px-16">
             <div className="shrink-0">
               <ZenviaLogo variant="light" />
             </div>
 
             {/* Se muestra solo cuando hay espacio; al hacer zoom se convierte en menú móvil. */}
-            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-0.5 text-[13px] font-medium text-slate-200 xl:flex font-poppins">
+            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 text-[14.5px] font-semibold text-slate-100 xl:flex font-poppins">
                 <Link
                   href="/dashboard"
                   className="dashboard-nav-link"
                 >
-                  <HomeIcon size={15} /> Inicio
+                  <HomeIcon size={17} /> Inicio
                 </Link>
                 <Link
                   href="/dashboard/courses"
                   className="dashboard-nav-link"
                 >
-                  <BookOpenIcon size={15} /> Cursos
+                  <BookOpenIcon size={17} /> Cursos
                 </Link>
                 <Link
                   href="/dashboard/grades"
                   className="dashboard-nav-link"
                 >
-                  <BarChartIcon size={15} /> Mis Notas
+                  <BarChartIcon size={17} /> Mis Notas
                 </Link>
                 <Link
                   href="/dashboard/messages"
                   className="dashboard-nav-link"
                 >
-                  <MessageSquareIcon size={15} /> Mensajes
+                  <MessageSquareIcon size={17} /> Mensajes
                 </Link>
                 <Link
                   href="/dashboard/calendar"
                   className="dashboard-nav-link"
                 >
-                  <CalendarIcon size={15} /> Calendario
+                  <CalendarIcon size={17} /> Calendario
                 </Link>
                 <Link
                   href="/dashboard/badges"
                   className="dashboard-nav-link"
                 >
-                  <AwardIcon size={15} /> Insignias
+                  <AwardIcon size={17} /> Insignias
                 </Link>
                 <Link
                   href="/dashboard/search"
                   className="dashboard-nav-link text-[#00BCE4]"
                 >
-                  <SearchIcon size={15} /> Buscar
+                  <SearchIcon size={17} /> Buscar
                 </Link>
                 {canManageUsers && (
                   <div className="ml-2 flex items-center gap-1 border-l border-white/20 pl-3">
@@ -90,7 +100,7 @@ export default async function DashboardLayout({
                       href="/dashboard/reports/builder"
                       className="rounded-lg px-2.5 py-1 text-xs text-[#ECD06F] hover:bg-white/10 transition flex items-center gap-1"
                     >
-                      <BarChartIcon size={13} className="shrink-0" /> Reportes
+                      <BarChartIcon size={14} className="shrink-0" /> Reportes
                     </Link>
                     <Link
                       href="/admin/users"

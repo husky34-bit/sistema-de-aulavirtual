@@ -71,8 +71,12 @@ export default async function ProfilePage() {
         <div className="absolute right-0 top-0 -mt-10 -mr-10 h-56 w-56 rounded-full bg-[#026BCA]/20 blur-3xl" />
 
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#026BCA] to-[#00BCE4] text-2xl font-black text-white shadow-lg ring-4 ring-white/20">
-            {initials}
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#026BCA] to-[#00BCE4] text-2xl font-black text-white shadow-lg ring-4 ring-white/20">
+            {user.image ? (
+              <img src={user.image} alt={user.name ?? "Perfil"} className="h-full w-full object-cover" />
+            ) : (
+              <span>{initials}</span>
+            )}
           </div>
 
           <div className="flex-1">
@@ -148,11 +152,12 @@ export default async function ProfilePage() {
         </div>
       </div>
 
-      {/* Editar Nombre de Usuario */}
+      {/* Editar Nombre y Foto de Usuario */}
       <EditProfileNameForm
         initialName={user.name ?? ""}
         email={user.email}
         roleLabel={roleInfo.label}
+        currentImage={user.image}
       />
 
       {/* Formulario de Cambio de Contraseña */}
