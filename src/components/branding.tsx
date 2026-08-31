@@ -5,18 +5,15 @@ import Image from "next/image";
 export function ZenviaLogo({ variant = "light" }: { variant?: "light" | "dark" }) {
   void variant;
   return (
-    <Link href="/" className="group flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-95">
-      {/* Cognos Logo Real */}
-      <div className="relative flex items-center bg-white rounded-md px-2.5 py-1 shadow-sm ring-1 ring-white/20">
-        <Image
-          src="/images/logos/cognos-virtual-moodle.png"
-          alt="Cognos Virtual"
-          width={180}
-          height={48}
-          className="h-7 md:h-8 w-auto object-contain"
-          priority
-        />
-      </div>
+    <Link href="/dashboard" className="group flex items-center transition-transform hover:opacity-95 active:scale-95 py-1">
+      <Image
+        src="/images/logos/cognos-virtual-moodle.png"
+        alt="Cognos Virtual"
+        width={220}
+        height={54}
+        className="h-9 sm:h-11 w-auto object-contain"
+        priority
+      />
     </Link>
   );
 }

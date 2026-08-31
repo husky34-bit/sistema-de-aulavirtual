@@ -40,15 +40,15 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2.5 rounded-full py-1 pl-3 pr-1 text-left transition-all hover:bg-white/10 active:scale-95"
+        className="flex items-center gap-2.5 rounded-full py-1 pl-3 pr-1 text-left transition-all hover:bg-slate-100 dark:hover:bg-white/10 active:scale-95"
         aria-expanded={isOpen}
       >
-        <span className="text-sm font-semibold text-white truncate max-w-[140px] sm:max-w-[200px]">
+        <span className="text-sm font-bold text-[#00155C] dark:text-white truncate max-w-[140px] sm:max-w-[200px]">
           {displayName}
         </span>
         <svg
-          className={`h-4 w-4 text-slate-300 transition-transform ${
-            isOpen ? 'rotate-180 text-white' : ''
+          className={`h-4 w-4 text-slate-600 dark:text-slate-300 transition-transform ${
+            isOpen ? 'rotate-180' : ''
           }`}
           fill="none"
           stroke="currentColor"
@@ -58,7 +58,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
         </svg>
 
         {/* Avatar Circular */}
-        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white/50 bg-gradient-to-br from-[#026BCA] to-[#00155C] text-xs font-bold text-white shadow-sm">
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-slate-200 dark:border-white/40 bg-gradient-to-br from-[#026BCA] to-[#00155C] text-xs font-bold text-white shadow-xs">
           {user.image ? (
             <img src={user.image} alt={displayName} className="h-full w-full object-cover" />
           ) : (
