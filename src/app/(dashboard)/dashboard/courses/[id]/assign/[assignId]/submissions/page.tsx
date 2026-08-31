@@ -51,6 +51,7 @@ export default async function SubmissionsPage({
               submittedAt={s.submittedAt}
               isLate={s.isLate}
               onlineText={s.onlineText}
+              files={s.files}
             />
           ))}
         </div>

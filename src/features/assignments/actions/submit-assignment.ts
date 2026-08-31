@@ -16,7 +16,7 @@ export async function submitAssignment(input: unknown) {
     return { success: false as const, errors: validated.error.flatten().fieldErrors };
   }
 
-  const { assignmentId, onlineText, mode } = validated.data;
+  const { assignmentId, onlineText, files, mode } = validated.data;
 
   const assignment = await prisma.assignment.findUnique({
     where: { id: assignmentId },
@@ -27,6 +27,7 @@ export async function submitAssignment(input: unknown) {
       dueAt: true,
       cutoffAt: true,
       allowOnlineText: true,
+      allowFiles: true,
       published: true,
     },
   });
@@ -83,6 +84,14 @@ export async function submitAssignment(input: unknown) {
       status,
       submittedAt: isSubmit ? now : null,
       isLate,
+      files: files && files.length > 0 ? {
+        create: files.map((f) => ({
+          fileName: f.fileName,
+          fileUrl: f.fileUrl,
+          sizeBytes: f.sizeBytes,
+          mimeType: f.mimeType,
+        })),
+      } : undefined,
     },
     update: {
       onlineText: onlineText ?? null,
@@ -91,6 +100,24 @@ export async function submitAssignment(input: unknown) {
       isLate,
     },
   });
+
+  // Si se envían archivos o se actualizan, sincronizar los archivos de la entrega
+  if (files !== undefined) {
+    await prisma.submissionFile.deleteMany({
+      where: { submissionId: submission.id },
+    });
+    if (files.length > 0) {
+      await prisma.submissionFile.createMany({
+        data: files.map((f) => ({
+          submissionId: submission.id,
+          fileName: f.fileName,
+          fileUrl: f.fileUrl,
+          sizeBytes: f.sizeBytes,
+          mimeType: f.mimeType,
+        })),
+      });
+    }
+  }
 
   // Marcar la tarea como completada al enviar (no al guardar borrador) (Fase 6C)
   if (isSubmit) {

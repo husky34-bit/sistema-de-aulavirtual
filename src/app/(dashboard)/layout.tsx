@@ -28,7 +28,7 @@ export default async function DashboardLayout({
     <div className="dashboard-shell min-h-screen flex flex-col justify-between">
       <div>
         <header className="sticky top-0 z-40 border-b border-[#002147] bg-[#00155C] shadow-md shadow-[#00155C]/20">
-          <div className="relative flex w-full items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+          <div className="relative mx-auto flex w-full max-w-[1780px] items-center justify-between gap-3 px-4 py-3 sm:px-8 lg:px-12 2xl:px-16">
             <div className="shrink-0">
               <ZenviaLogo variant="light" />
             </div>
@@ -121,14 +121,14 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <main className="mx-auto w-full max-w-[1780px] px-4 py-6 sm:px-8 lg:px-12 2xl:px-16">
           {children}
         </main>
       </div>
 
       {/* Footer Cognos */}
       <footer className="mt-16 border-t border-white/10 bg-[#00155C] text-white py-6">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-6 text-xs text-slate-300">
+        <div className="mx-auto flex max-w-[1780px] flex-col items-center justify-between gap-4 px-4 sm:flex-row sm:px-8 lg:px-12 2xl:px-16 text-xs text-slate-300">
           <div className="flex items-center gap-2">
             <span className="font-bold text-white tracking-wide">COGNOS CAPACITACIÓN</span>
             <span>·</span>

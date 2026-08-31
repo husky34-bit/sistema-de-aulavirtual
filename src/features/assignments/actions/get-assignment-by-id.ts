@@ -38,6 +38,16 @@ export async function getAssignmentById(assignmentId: string) {
       score: true,
       feedback: true,
       gradedAt: true,
+      files: {
+        select: {
+          id: true,
+          fileName: true,
+          fileUrl: true,
+          sizeBytes: true,
+          mimeType: true,
+          uploadedAt: true,
+        },
+      },
     },
   });
 

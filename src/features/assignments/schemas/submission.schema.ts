@@ -1,10 +1,21 @@
 import { z } from 'zod';
 
+export const submissionFileSchema = z.object({
+  fileName: z.string().min(1),
+  fileUrl: z.string().min(1),
+  sizeBytes: z.number().int().nonnegative(),
+  mimeType: z.string().min(1),
+});
+
+export type SubmissionFileInput = z.infer<typeof submissionFileSchema>;
+
 // Esquema de envío de tarea por un estudiante.
 export const submitSchema = z.object({
   assignmentId: z.string().min(1, 'Se requiere el ID de la tarea'),
   // texto en línea (máximo 20,000 caracteres)
   onlineText: z.string().max(20000, 'El texto no puede exceder 20,000 caracteres').optional(),
+  // archivos adjuntos
+  files: z.array(submissionFileSchema).optional(),
   // modo de guardado: 'draft' | 'submit'
   mode: z.enum(['draft', 'submit']).default('submit'),
 });
@@ -19,3 +30,4 @@ export const gradeSubmissionSchema = z.object({
 });
 
 export type GradeSubmissionInput = z.infer<typeof gradeSubmissionSchema>;
+

@@ -38,9 +38,13 @@ export default async function AssignmentDetailPage({
       </div>
 
       {a.instructions && (
-        <div className="rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="mb-2 text-sm font-semibold text-slate-900">Instrucciones</h2>
-          <p className="whitespace-pre-wrap text-sm text-slate-700">{a.instructions}</p>
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5">
+          <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-[#00155C] dark:text-[#00BCE4]">
+            Instrucciones de la Actividad
+          </h2>
+          <p className="whitespace-pre-wrap text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            {a.instructions}
+          </p>
         </div>
       )}
 
@@ -48,9 +52,9 @@ export default async function AssignmentDetailPage({
         <div className="space-y-3">
           <Link
             href={`/dashboard/courses/${courseId}/assign/${assignId}/submissions`}
-            className="inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+            className="inline-block border border-[#00155C] bg-[#00155C] px-5 py-2.5 text-xs font-bold text-white hover:bg-[#026BCA] transition"
           >
-            Ver entregas
+            Ver Entregas de Estudiantes →
           </Link>
         </div>
       ) : (
@@ -59,6 +63,7 @@ export default async function AssignmentDetailPage({
           allowOnlineText={a.allowOnlineText}
           allowFiles={a.allowFiles}
           initialText={a.mySubmission?.onlineText ?? null}
+          initialFiles={a.mySubmission?.files ?? []}
           initialStatus={a.mySubmission?.status ?? null}
           initialFeedback={a.mySubmission?.feedback ?? null}
           initialScore={a.mySubmission?.score ?? null}
@@ -80,8 +85,10 @@ export default async function AssignmentDetailPage({
           submittedAt={a.mySubmission.submittedAt}
           isLate={a.mySubmission.isLate}
           onlineText={a.mySubmission.onlineText}
+          files={a.mySubmission.files}
         />
       )}
     </div>
   );
 }
+

@@ -16,6 +16,13 @@ interface GradingPanelProps {
   submittedAt?: Date | string | null;
   isLate?: boolean;
   onlineText?: string | null;
+  files?: Array<{
+    id: string;
+    fileName: string;
+    fileUrl: string;
+    sizeBytes: number;
+    mimeType: string;
+  }>;
 }
 
 export function GradingPanel({
@@ -30,6 +37,7 @@ export function GradingPanel({
   submittedAt,
   isLate,
   onlineText,
+  files,
 }: GradingPanelProps) {
   const [score, setScore] = useState<string>(initialScore !== null && initialScore !== undefined ? String(initialScore) : '');
   const [feedback, setFeedback] = useState(initialFeedback ?? '');
@@ -79,16 +87,22 @@ export function GradingPanel({
     });
   }
 
+  function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+
   return (
-    <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5">
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
-          <h4 className="font-semibold text-slate-900">{userName}</h4>
+          <h4 className="font-bold text-[#00155C] dark:text-white">{userName}</h4>
           <p className="text-xs text-slate-500">{userEmail}</p>
         </div>
         <div className="flex items-center gap-2">
           {isLate && (
-            <span className="inline-flex rounded bg-red-100 px-1.5 py-0.5 text-xs text-red-700">
+            <span className="inline-flex border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700">
               Entrega tardía
             </span>
           )}
@@ -100,9 +114,43 @@ export function GradingPanel({
         </div>
       </div>
 
+      {/* Online Text Response */}
       {onlineText && (
-        <div className="rounded-lg bg-slate-50 p-4 text-sm whitespace-pre-wrap text-slate-700 max-h-64 overflow-auto">
-          {onlineText}
+        <div>
+          <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Respuesta en línea:</h5>
+          <div className="border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 p-4 text-xs whitespace-pre-wrap text-slate-800 dark:text-slate-200 max-h-64 overflow-auto">
+            {onlineText}
+          </div>
+        </div>
+      )}
+
+      {/* Attached Files */}
+      {files && files.length > 0 && (
+        <div>
+          <h5 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            Archivos adjuntos ({files.length}):
+          </h5>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {files.map((file) => (
+              <a
+                key={file.id}
+                href={file.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download={file.fileName}
+                className="flex items-center justify-between border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-2.5 hover:border-[#026BCA] dark:hover:border-[#00BCE4] transition"
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <span className="text-sm">📎</span>
+                  <div className="truncate">
+                    <p className="text-xs font-bold text-[#00155C] dark:text-white truncate">{file.fileName}</p>
+                    <p className="text-[10px] text-slate-500">{formatBytes(file.sizeBytes)}</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[#026BCA] shrink-0 ml-2">Descargar ↓</span>
+              </a>
+            ))}
+          </div>
         </div>
       )}
 

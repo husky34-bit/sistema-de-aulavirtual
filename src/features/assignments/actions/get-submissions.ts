@@ -25,6 +25,15 @@ export async function getSubmissions(assignmentId: string) {
     include: {
       user: { select: { id: true, name: true, email: true } },
       gradedBy: { select: { id: true, name: true } },
+      files: {
+        select: {
+          id: true,
+          fileName: true,
+          fileUrl: true,
+          sizeBytes: true,
+          mimeType: true,
+        },
+      },
     },
     orderBy: { submittedAt: 'asc' },
   });
@@ -39,6 +48,7 @@ export async function getSubmissions(assignmentId: string) {
         userName: s.user.name,
         userEmail: s.user.email,
         onlineText: s.onlineText,
+        files: s.files,
         status: s.status,
         submittedAt: s.submittedAt,
         isLate: s.isLate,
