@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -19,7 +18,6 @@ interface CognosNavbarProps {
 
 export function CognosNavbar({ canManageUsers }: CognosNavbarProps) {
   const pathname = usePathname();
-  const [editMode, setEditMode] = useState(false);
 
   const isHome = pathname === '/dashboard';
   const isCourses = pathname.startsWith('/dashboard/courses');
@@ -155,39 +153,6 @@ export function CognosNavbar({ canManageUsers }: CognosNavbarProps) {
               </Link>
             </div>
           )}
-        </div>
-
-        {/* Acciones del lado derecho: Modo de edición & Búsqueda rápida */}
-        <div className="flex items-center gap-3 shrink-0 py-1">
-          {/* Modo de edición Toggle */}
-          <div className="flex items-center gap-2 text-xs text-slate-300">
-            <span className="hidden md:inline text-[12px]">Modo de edición</span>
-            <button
-              type="button"
-              onClick={() => setEditMode((prev) => !prev)}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                editMode ? 'bg-[#00BCE4]' : 'bg-slate-600'
-              }`}
-              title={editMode ? 'Modo de edición activado' : 'Modo de edición desactivado'}
-            >
-              <span
-                className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-                  editMode ? 'translate-x-4.5' : 'translate-x-0.5'
-                }`}
-              />
-            </button>
-          </div>
-
-          {/* Botón de Búsqueda */}
-          <Link
-            href="/dashboard/search"
-            className={`flex h-7 w-7 items-center justify-center rounded-full bg-slate-700/80 text-slate-300 hover:bg-slate-600 hover:text-white transition ${
-              isSearch ? 'text-white bg-[#00BCE4]' : ''
-            }`}
-            title="Buscar en cursos y recursos"
-          >
-            <SearchIcon size={13} />
-          </Link>
         </div>
       </div>
     </div>
