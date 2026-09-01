@@ -11,14 +11,18 @@ export function NotificationBell() {
 
   useEffect(() => {
     let active = true;
-    getUnreadCount().then((res) => {
-      if (active && res.success) setCount(res.count);
-    });
+    getUnreadCount()
+      .then((res) => {
+        if (active && res?.success) setCount(res.count);
+      })
+      .catch(() => {});
 
     const interval = setInterval(() => {
-      getUnreadCount().then((res) => {
-        if (active && res.success) setCount(res.count);
-      });
+      getUnreadCount()
+        .then((res) => {
+          if (active && res?.success) setCount(res.count);
+        })
+        .catch(() => {});
     }, 30000);
 
     return () => {

@@ -10,14 +10,18 @@ export function MessageBell() {
 
   useEffect(() => {
     let active = true;
-    getUnreadMessagesCount().then((res) => {
-      if (active && res.success) setCount(res.count);
-    });
+    getUnreadMessagesCount()
+      .then((res) => {
+        if (active && res?.success) setCount(res.count);
+      })
+      .catch(() => {});
 
     const interval = setInterval(() => {
-      getUnreadMessagesCount().then((res) => {
-        if (active && res.success) setCount(res.count);
-      });
+      getUnreadMessagesCount()
+        .then((res) => {
+          if (active && res?.success) setCount(res.count);
+        })
+        .catch(() => {});
     }, 30000);
 
     return () => {
