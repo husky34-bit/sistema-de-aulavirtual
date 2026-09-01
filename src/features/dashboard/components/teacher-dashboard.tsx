@@ -3,7 +3,10 @@ import {
   BarChartIcon,
   GraduationCapIcon,
   BookIcon,
+  BookOpenIcon,
+  UsersIcon,
   CheckCircleIcon,
+  ClockIcon,
 } from "@/components/Icons";
 
 interface TeacherDashboardProps {
@@ -27,92 +30,182 @@ export function TeacherDashboard({ user, coursesTaught, pendingSubmissions }: Te
   const totalStudents = coursesTaught.reduce((acc, c) => acc + c._count.enrollments, 0);
   const totalQuizzes = coursesTaught.reduce((acc, c) => acc + c._count.quizzes, 0);
 
-  return (
-    <div className="space-y-8 font-poppins">
-      {/* Banner Superior Docente */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#00155C] via-[#002147] to-[#0A1A3A] p-8 text-white shadow-xl shadow-[#00155C]/20 ring-1 ring-white/10">
-        <div className="absolute right-0 top-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-[#026BCA]/20 blur-3xl" />
+  // Evitar duplicar "Profesor Profesor" si el nombre ya incluye el título
+  const rawName = user.name?.trim() ?? "Docente";
+  const displayName = rawName.toLowerCase().startsWith("profesor")
+    ? rawName
+    : `Profesor ${rawName}`;
 
-        <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/20 px-3.5 py-1 text-xs font-bold text-amber-300 ring-1 ring-amber-500/30 backdrop-blur-sm">
-              <GraduationCapIcon size={14} className="shrink-0" /> ESPACIO DEL DOCENTE · COGNOS CAPACITACIÓN
-            </div>
-            <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl font-poppins">
-              ¡Bienvenido, Profesor {user.name ?? "Docente"}!
-            </h1>
-            <p className="mt-1 text-sm text-slate-300 max-w-xl font-normal leading-relaxed">
-              Gestiona los contenidos de tus módulos, califica entregas de laboratorio, programa clases en vivo y supervisa las evaluaciones de tus alumnos.
-            </p>
+  return (
+    <div className="space-y-6 font-poppins">
+      {/* Encabezado Minimalista Sin Caja Contenedora */}
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end border-b border-slate-200 dark:border-slate-800 pb-5">
+        <div>
+          <div className="inline-flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#00155C] dark:text-[#00BCE4]">
+            <GraduationCapIcon size={12} className="shrink-0" />
+            <span>Espacio del Docente · Cognos Capacitación</span>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/dashboard/courses/new"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#026BCA] to-[#00BCE4] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#026BCA]/30 transition-all hover:scale-105 active:scale-95"
-            >
-              <span>+ Crear nuevo curso</span>
-            </Link>
-            <Link
-              href="/dashboard/grades"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
-              <span>Libro de Notas</span>
-            </Link>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#00155C] dark:text-white tracking-tight">
+            ¡Bienvenido, {displayName}!
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+            Gestiona los contenidos de tus módulos, califica entregas de laboratorio y supervisa el progreso de tus alumnos.
+          </p>
+        </div>
+
+        {/* Acciones Rápidas */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/dashboard/courses/new"
+            className="inline-flex items-center gap-2 bg-[#00155C] px-4 py-2 text-xs font-bold text-white hover:bg-[#026BCA] transition dark:bg-[#026BCA] dark:hover:bg-[#00BCE4] dark:hover:text-[#00155C]"
+          >
+            <span>+ Crear Nuevo Curso</span>
+          </Link>
+          <Link
+            href="/dashboard/grades"
+            className="inline-flex items-center gap-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#101D31] px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+          >
+            <BarChartIcon size={14} />
+            <span>Libro de Notas</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Fila de 4 Tarjetas KPI Independientes (Minimalistas y Cuadradas) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPI 1: Cursos a Cargo */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#026BCA] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Cursos a tu Cargo
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#00155C] dark:text-[#00BCE4]">
+              <BookOpenIcon size={16} />
+            </span>
+          </div>
+          <div className="mt-4">
+            <p className="text-3xl font-extrabold text-[#00155C] dark:text-white">
+              {coursesTaught.length}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Programas asignados activos
+            </p>
           </div>
         </div>
 
-        {/* Métricas del Docente */}
-        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:grid-cols-4">
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Cursos a tu Cargo</p>
-            <p className="text-2xl font-extrabold text-[#00BCE4]">{coursesTaught.length}</p>
+        {/* KPI 2: Total Alumnos */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#12AC81] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Total Alumnos
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#12AC81]">
+              <UsersIcon size={16} />
+            </span>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Total Alumnos</p>
-            <p className="text-2xl font-extrabold text-[#12AC81]">{totalStudents}</p>
+          <div className="mt-4">
+            <p className="text-3xl font-extrabold text-[#12AC81]">
+              {totalStudents}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Estudiantes matriculados
+            </p>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Por Calificar</p>
-            <p className="text-2xl font-extrabold text-[#ECD06F]">{pendingSubmissions.length}</p>
+        </div>
+
+        {/* KPI 3: Por Calificar */}
+        <div className={`border bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between transition ${
+          pendingSubmissions.length > 0
+            ? 'border-amber-400/80 bg-amber-50/20 dark:bg-amber-950/10'
+            : 'border-slate-200 dark:border-slate-800 hover:border-slate-300'
+        }`}>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Por Calificar
+            </span>
+            <span className={`flex h-8 w-8 items-center justify-center border ${
+              pendingSubmissions.length > 0
+                ? 'border-amber-300 bg-amber-100 text-amber-800 dark:border-amber-600 dark:bg-amber-900/40 dark:text-amber-300'
+                : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-400'
+            }`}>
+              <ClockIcon size={16} />
+            </span>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Evaluaciones Activas</p>
-            <p className="text-2xl font-extrabold text-cyan-300">{totalQuizzes}</p>
+          <div className="mt-4">
+            <div className="flex items-baseline gap-2">
+              <p className={`text-3xl font-extrabold ${
+                pendingSubmissions.length > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-200'
+              }`}>
+                {pendingSubmissions.length}
+              </p>
+              {pendingSubmissions.length === 0 && (
+                <span className="text-[10px] font-bold uppercase text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 px-1.5 py-0.2 border border-emerald-200 dark:border-emerald-800">
+                  Al día
+                </span>
+              )}
+            </div>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              {pendingSubmissions.length > 0 ? 'Entregas esperando revisión' : 'Sin tareas pendientes'}
+            </p>
+          </div>
+        </div>
+
+        {/* KPI 4: Evaluaciones Activas */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#00BCE4] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Evaluaciones Activas
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#00BCE4]">
+              <BarChartIcon size={16} />
+            </span>
+          </div>
+          <div className="mt-4">
+            <p className="text-3xl font-extrabold text-[#00155C] dark:text-white">
+              {totalQuizzes}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Cuestionarios en curso
+            </p>
           </div>
         </div>
       </div>
 
       {/* Bandeja de Tareas por Calificar */}
       {pendingSubmissions.length > 0 && (
-        <section className="rounded-2xl border border-amber-200 dark:border-amber-500/30 bg-amber-50/50 dark:bg-amber-500/10 p-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-amber-200/60 dark:border-amber-500/20 pb-3">
+        <section className="border border-amber-300 dark:border-amber-600/40 bg-amber-50/40 dark:bg-amber-950/10 p-5">
+          <div className="flex items-center justify-between border-b border-amber-200 dark:border-amber-700/40 pb-3">
             <div className="flex items-center gap-2">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500 text-white font-bold text-xs">
+              <span className="flex h-6 w-6 items-center justify-center bg-amber-500 text-white font-bold text-xs">
                 !
               </span>
               <div>
-                <h3 className="text-base font-bold text-[#00155C]">Bandeja de Entregas por Calificar</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-300">Alumnos que han enviado actividades esperando tu retroalimentación</p>
+                <h3 className="text-sm font-bold text-[#00155C] dark:text-amber-200">
+                  Bandeja de Entregas por Calificar
+                </h3>
+                <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                  Alumnos que han enviado actividades esperando tu retroalimentación
+                </p>
               </div>
             </div>
-            <span className="rounded-full bg-amber-100 text-amber-900 dark:bg-amber-500/20 dark:text-amber-300 px-2.5 py-0.5 text-xs font-bold">
+            <span className="border border-amber-300 bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-300 px-2 py-0.5 text-[10px] font-bold uppercase">
               {pendingSubmissions.length} pendiente(s)
             </span>
           </div>
 
-          <div className="mt-4 divide-y divide-amber-200/50 dark:divide-amber-500/20">
+          <div className="mt-3 divide-y divide-amber-200/60 dark:divide-amber-700/30">
             {pendingSubmissions.slice(0, 5).map((sub) => (
-              <div key={sub.id} className="flex flex-col sm:flex-row sm:items-center justify-between py-3 gap-2">
+              <div key={sub.id} className="flex flex-col sm:flex-row sm:items-center justify-between py-2.5 gap-2">
                 <div>
-                  <p className="text-sm font-bold text-[#00155C]">{sub.assignment.title}</p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs font-bold text-[#00155C] dark:text-white">{sub.assignment.title}</p>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400">
                     Estudiante: <strong>{sub.user.name ?? sub.user.email}</strong> • Curso: {sub.assignment.course.title}
                   </p>
                 </div>
                 <Link
                   href={`/dashboard/courses/${sub.assignment.course.id}/assign/${sub.assignment.id}`}
-                  className="rounded-lg bg-[#00155C] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#026BCA] transition self-start sm:self-auto"
+                  className="bg-[#00155C] px-3 py-1 text-xs font-bold text-white hover:bg-[#026BCA] transition self-start sm:self-auto"
                 >
                   Evaluar Entrega →
                 </Link>
@@ -126,26 +219,30 @@ export function TeacherDashboard({ user, coursesTaught, pendingSubmissions }: Te
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-extrabold text-[#00155C]">Cursos que Impartes</h2>
-            <p className="text-xs text-slate-500">Acceso a edición de contenidos, banco de preguntas y reportes</p>
+            <h2 className="text-base sm:text-lg font-bold text-[#00155C] dark:text-white">
+              Cursos que Impartes
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
+              Acceso a edición de contenidos, banco de preguntas y libro de calificaciones
+            </p>
           </div>
           <Link
             href="/dashboard/courses/new"
-            className="text-xs font-bold text-[#026BCA] hover:underline"
+            className="text-xs font-bold text-[#026BCA] hover:underline dark:text-[#00BCE4]"
           >
             + Crear nuevo curso
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {coursesTaught.map((course) => (
             <div
               key={course.id}
-              className="flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-[#026BCA] hover:shadow-xl"
+              className="flex flex-col justify-between border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 shadow-xs transition-all hover:border-[#026BCA] dark:hover:border-[#00BCE4]"
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[#EDF6FF] px-2.5 py-0.5 text-xs font-bold text-[#00155C]">
+                  <span className="border border-blue-200 dark:border-blue-900/60 bg-[#EDF6FF] dark:bg-blue-950/40 px-2 py-0.5 text-[10px] font-bold text-[#00155C] dark:text-[#00BCE4]">
                     {course._count.enrollments} alumnos inscritos
                   </span>
                   <span className="text-[11px] font-semibold text-slate-400">
@@ -153,44 +250,44 @@ export function TeacherDashboard({ user, coursesTaught, pendingSubmissions }: Te
                   </span>
                 </div>
 
-                <h3 className="mt-3 text-base font-bold text-[#00155C]">
+                <h3 className="mt-3 text-sm font-bold text-[#00155C] dark:text-white line-clamp-2">
                   {course.title}
                 </h3>
                 {course.description && (
-                  <p className="mt-2 line-clamp-2 text-xs text-slate-600 leading-relaxed font-normal">
+                  <p className="mt-2 line-clamp-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
                     {course.description}
                   </p>
                 )}
               </div>
 
-              <div className="mt-6 space-y-3 border-t border-slate-100 pt-4">
-                <div className="grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="mt-5 space-y-2.5 border-t border-slate-100 dark:border-slate-800 pt-3.5">
+                <div className="grid grid-cols-3 gap-1.5 text-center text-xs">
                   <Link
                     href={`/dashboard/courses/${course.id}/questions`}
-                    className="rounded-lg bg-slate-50 p-2 font-bold text-slate-700 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-1"
+                    className="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 p-1.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-0.5"
                   >
-                    <BookIcon size={14} className="text-[#026BCA]" />
-                    <span className="text-[10px]">Preguntas</span>
+                    <BookIcon size={13} className="text-[#026BCA]" />
+                    <span className="text-[9px]">Preguntas</span>
                   </Link>
                   <Link
                     href={`/dashboard/courses/${course.id}/grades`}
-                    className="rounded-lg bg-slate-50 p-2 font-bold text-slate-700 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-1"
+                    className="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 p-1.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-0.5"
                   >
-                    <BarChartIcon size={14} className="text-[#12AC81]" />
-                    <span className="text-[10px]">Notas</span>
+                    <BarChartIcon size={13} className="text-[#12AC81]" />
+                    <span className="text-[9px]">Notas</span>
                   </Link>
                   <Link
                     href={`/dashboard/courses/${course.id}/reports`}
-                    className="rounded-lg bg-slate-50 p-2 font-bold text-slate-700 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-1"
+                    className="border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 p-1.5 font-bold text-slate-700 dark:text-slate-300 hover:bg-[#EDF6FF] hover:text-[#00155C] transition flex flex-col items-center gap-0.5"
                   >
-                    <CheckCircleIcon size={14} className="text-[#ECD06F]" />
-                    <span className="text-[10px]">Reportes</span>
+                    <CheckCircleIcon size={13} className="text-[#ECD06F]" />
+                    <span className="text-[9px]">Reportes</span>
                   </Link>
                 </div>
 
                 <Link
                   href={`/dashboard/courses/${course.id}`}
-                  className="block w-full rounded-xl bg-[#00155C] py-2 text-center text-xs font-bold text-white shadow-md hover:bg-[#026BCA] transition"
+                  className="block w-full bg-[#00155C] py-2 text-center text-xs font-bold text-white hover:bg-[#026BCA] transition dark:bg-[#026BCA] dark:hover:bg-[#00BCE4] dark:hover:text-[#00155C]"
                 >
                   Gestionar Contenidos →
                 </Link>

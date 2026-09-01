@@ -34,61 +34,119 @@ interface StudentDashboardProps {
 
 export function StudentDashboard({ user, enrollments, upcomingTasks }: StudentDashboardProps) {
   return (
-    <div className="space-y-8 font-poppins">
-      {/* Banner Superior Estudiante */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#00155C] via-[#002147] to-[#0A1A3A] p-8 text-white shadow-xl shadow-[#00155C]/20 ring-1 ring-white/10">
-        <div className="absolute right-0 top-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-[#026BCA]/20 blur-3xl" />
-
-        <div className="relative z-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-[#00BCE4]/15 px-3.5 py-1 text-xs font-bold text-[#00BCE4] ring-1 ring-[#00BCE4]/30 backdrop-blur-sm">
-              <GraduationCapIcon size={14} className="shrink-0" /> AULA VIRTUAL · GRUPO COGNOS
-            </div>
-            <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl font-poppins">
-              ¡Hola, {user.name ?? "Estudiante"}!
-            </h1>
-            <p className="mt-1 text-sm text-slate-300 max-w-xl font-normal leading-relaxed">
-              «El placer de enseñar, la pasión por aprender». Accede a tus clases en vivo, interactúa en foros y avanza hacia tu certificación profesional.
-            </p>
+    <div className="space-y-6 font-poppins">
+      {/* Encabezado Minimalista Sin Caja Contenedora */}
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end border-b border-slate-200 dark:border-slate-800 pb-5">
+        <div>
+          <div className="inline-flex items-center gap-1.5 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#00155C] dark:text-[#00BCE4]">
+            <GraduationCapIcon size={12} className="shrink-0" />
+            <span>Aula Virtual · Cognos Capacitación</span>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/dashboard/courses"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#026BCA] to-[#00BCE4] px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#026BCA]/30 transition-all hover:scale-105 active:scale-95"
-            >
-              <span>Explorar Catálogo</span>
-              <span>→</span>
-            </Link>
-            <Link
-              href="/dashboard/grades"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
-              <span>Mis Calificaciones</span>
-            </Link>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold text-[#00155C] dark:text-white tracking-tight">
+            ¡Hola, {user.name ?? "Estudiante"}!
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+            «El placer de enseñar, la pasión por aprender». Accede a tus clases en vivo, interactúa en foros y avanza hacia tu certificación profesional.
+          </p>
+        </div>
+
+        {/* Acciones Rápidas */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/dashboard/courses"
+            className="inline-flex items-center gap-2 bg-[#00155C] px-4 py-2 text-xs font-bold text-white hover:bg-[#026BCA] transition dark:bg-[#026BCA] dark:hover:bg-[#00BCE4] dark:hover:text-[#00155C]"
+          >
+            <span>Explorar Catálogo →</span>
+          </Link>
+          <Link
+            href="/dashboard/grades"
+            className="inline-flex items-center gap-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#101D31] px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+          >
+            <BarChartIcon size={14} />
+            <span>Mis Calificaciones</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* Fila de 4 Tarjetas KPI Independientes */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* KPI 1: Cursos Activos */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#026BCA] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Cursos Activos
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#00155C] dark:text-[#00BCE4]">
+              <BookOpenIcon size={16} />
+            </span>
+          </div>
+          <div className="mt-4">
+            <p className="text-3xl font-extrabold text-[#00155C] dark:text-white">
+              {enrollments.length}
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Programas matriculados
+            </p>
           </div>
         </div>
 
-        {/* Métricas del Estudiante */}
-        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 border-t border-white/10 pt-6 sm:grid-cols-4">
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Cursos Activos</p>
-            <p className="text-2xl font-extrabold text-[#00BCE4]">{enrollments.length}</p>
+        {/* KPI 2: Estado de Avance */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#12AC81] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Estado de Avance
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#12AC81]">
+              <CheckCircleIcon size={16} />
+            </span>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Estado de Avance</p>
-            <p className="text-sm font-bold text-[#12AC81] flex items-center gap-1.5 mt-1">
-              <CheckCircleIcon size={14} className="text-[#12AC81]" /> Al Día
+          <div className="mt-4">
+            <p className="text-2xl font-extrabold text-[#12AC81] flex items-center gap-1.5">
+              Al Día
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Actividades al corriente
             </p>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Requisito Certificación</p>
-            <p className="text-xs font-bold text-[#ECD06F] mt-1">≥ 70 pts & 80% Asistencia</p>
+        </div>
+
+        {/* KPI 3: Requisito de Certificación */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#ECD06F] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Certificación
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#ECD06F]">
+              <ClockIcon size={16} />
+            </span>
           </div>
-          <div className="rounded-xl bg-white/5 p-4 ring-1 ring-white/10 backdrop-blur-md">
-            <p className="text-xs font-semibold text-slate-300">Acreditaciones</p>
-            <p className="text-sm font-bold text-cyan-300 mt-1 flex items-center gap-1">
-              <AwardIcon size={14} /> Cognos Internacional
+          <div className="mt-4">
+            <p className="text-xl font-extrabold text-[#00155C] dark:text-white">
+              ≥ 70 pts
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              y 80% asistencia mínima
+            </p>
+          </div>
+        </div>
+
+        {/* KPI 4: Acreditaciones */}
+        <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] p-5 flex flex-col justify-between hover:border-[#00BCE4] transition">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Acreditación
+            </span>
+            <span className="flex h-8 w-8 items-center justify-center border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[#00BCE4]">
+              <AwardIcon size={16} />
+            </span>
+          </div>
+          <div className="mt-4">
+            <p className="text-base font-extrabold text-[#00155C] dark:text-white truncate">
+              Cognos Internacional
+            </p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              Certificación oficial
             </p>
           </div>
         </div>
