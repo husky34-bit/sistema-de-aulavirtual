@@ -12,12 +12,12 @@ export function CourseParticipants({
   courseId,
   courseTitle,
   people,
-  canEdit = false,
+  canEnroll = false,
 }: {
   courseId: string;
   courseTitle: string;
   people: Participant[];
-  canEdit?: boolean;
+  canEnroll?: boolean;
 }) {
   const router = useRouter();
   const [message, setMessage] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function CourseParticipants({
           </div>
         </div>
 
-        {canEdit && (
+        {canEnroll && (
           <RegisterStudentModal
             courseId={courseId}
             courseTitle={courseTitle}

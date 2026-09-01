@@ -16,8 +16,8 @@ const CreateStudentSchema = z.object({
 export type CreateStudentInput = z.infer<typeof CreateStudentSchema>;
 
 export async function createStudent(input: CreateStudentInput) {
-  // Solo docentes, administradores y gestores pueden registrar alumnos directamente
-  await requireRole(["TEACHER", "ADMIN", "MANAGER"]);
+  // Solo administradores y gestores pueden registrar y matricular alumnos
+  await requireRole(["ADMIN", "MANAGER"]);
 
   const parsed = CreateStudentSchema.safeParse(input);
   if (!parsed.success) {

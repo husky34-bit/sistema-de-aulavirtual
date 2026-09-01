@@ -57,12 +57,6 @@ export function TeacherDashboard({ user, coursesTaught, pendingSubmissions }: Te
         {/* Acciones Rápidas */}
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
-            href="/dashboard/courses/new"
-            className="inline-flex items-center gap-2 bg-[#00155C] px-4 py-2 text-xs font-bold text-white hover:bg-[#026BCA] transition dark:bg-[#026BCA] dark:hover:bg-[#00BCE4] dark:hover:text-[#00155C]"
-          >
-            <span>+ Crear Nuevo Curso</span>
-          </Link>
-          <Link
             href="/dashboard/grades"
             className="inline-flex items-center gap-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#101D31] px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition"
           >
@@ -226,12 +220,6 @@ export function TeacherDashboard({ user, coursesTaught, pendingSubmissions }: Te
               Acceso a edición de contenidos, banco de preguntas y libro de calificaciones
             </p>
           </div>
-          <Link
-            href="/dashboard/courses/new"
-            className="text-xs font-bold text-[#026BCA] hover:underline dark:text-[#00BCE4]"
-          >
-            + Crear nuevo curso
-          </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">

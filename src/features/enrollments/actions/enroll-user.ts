@@ -12,7 +12,7 @@ export async function enrollUser(input: {
   userId: string;
   courseId: string;
 }) {
-  await requireRole(["ADMIN", "TEACHER", "MANAGER"]);
+  await requireRole(["ADMIN", "MANAGER"]);
 
   const validated = enrollSchema.safeParse(input);
   if (!validated.success) {

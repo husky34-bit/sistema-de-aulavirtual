@@ -1,4 +1,5 @@
 import { requireRole } from "@/lib/auth-helpers";
+import { prisma } from "@/lib/prisma";
 import { CreateCourseClientForm } from "@/features/courses/components/create-course-client-form";
 import { BookOpenIcon } from "@/components/Icons";
 
@@ -7,7 +8,13 @@ export const metadata = {
 };
 
 export default async function NewCoursePage() {
-  await requireRole(["ADMIN", "TEACHER", "MANAGER"]);
+  await requireRole(["ADMIN", "MANAGER"]);
+
+  const teachers = await prisma.user.findMany({
+    where: { role: { in: ["TEACHER", "ADMIN", "MANAGER"] } },
+    select: { id: true, name: true, email: true },
+    orderBy: { name: "asc" },
+  });
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 font-poppins">
@@ -18,12 +25,12 @@ export default async function NewCoursePage() {
         <div>
           <h1 className="text-2xl font-extrabold text-[#00155C]">Crear Nuevo Curso</h1>
           <p className="text-xs text-slate-500">
-            Define el programa, portada representativa, secciones y actividades para tus estudiantes.
+            Define el programa, asigna el docente a cargo, portada representativa y configuraciones iniciales.
           </p>
         </div>
       </div>
 
-      <CreateCourseClientForm />
+      <CreateCourseClientForm teachers={teachers} />
     </div>
   );
 }

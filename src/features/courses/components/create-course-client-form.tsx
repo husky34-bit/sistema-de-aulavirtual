@@ -38,12 +38,23 @@ const PRESET_COVERS = [
   },
 ];
 
-export function CreateCourseClientForm() {
+interface TeacherOption {
+  id: string;
+  name: string | null;
+  email: string;
+}
+
+interface CreateCourseClientFormProps {
+  teachers?: TeacherOption[];
+}
+
+export function CreateCourseClientForm({ teachers = [] }: CreateCourseClientFormProps) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [autoSlug, setAutoSlug] = useState(true);
   const [description, setDescription] = useState("");
+  const [instructorId, setInstructorId] = useState(teachers[0]?.id ?? "");
   const [imageUrl, setImageUrl] = useState(PRESET_COVERS[0].url);
   const [area, setArea] = useState(PRESET_COVERS[0].area);
   const [level, setLevel] = useState("intermedio");
@@ -74,6 +85,7 @@ export function CreateCourseClientForm() {
     formData.append("title", title);
     formData.append("slug", slug);
     if (description) formData.append("description", description);
+    if (instructorId) formData.append("instructorId", instructorId);
     if (imageUrl) formData.append("imageUrl", imageUrl);
     if (area) formData.append("area", area);
     if (level) formData.append("level", level);
@@ -106,6 +118,27 @@ export function CreateCourseClientForm() {
         <h2 className="text-base font-bold text-[#00155C] border-b border-slate-100 pb-3">
           1. Datos Principales del Curso
         </h2>
+
+        {/* Asignar Docente / Instructor */}
+        {teachers.length > 0 && (
+          <div>
+            <label htmlFor="instructorId" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Docente / Instructor Asignado *
+            </label>
+            <select
+              id="instructorId"
+              value={instructorId}
+              onChange={(e) => setInstructorId(e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#026BCA] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#026BCA]/20"
+            >
+              {teachers.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name ?? t.email} ({t.email})
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label htmlFor="title" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">

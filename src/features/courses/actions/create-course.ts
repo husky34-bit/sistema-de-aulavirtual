@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
  * para que no se vea roto en la UI (patrón Moodle).
  */
 export async function createCourse(formData: FormData) {
-  const user = await requireRole(["ADMIN", "TEACHER", "MANAGER"]);
+  const user = await requireRole(["ADMIN", "MANAGER"]);
 
   const validated = createCourseSchema.safeParse({
     title: formData.get("title"),
@@ -40,10 +40,12 @@ export async function createCourse(formData: FormData) {
     };
   }
 
+  const instructorId = (formData.get("instructorId") as string) || user.id;
+
   const course = await prisma.course.create({
     data: {
       ...validated.data,
-      instructorId: user.id,
+      instructorId,
       sections: {
         create: [{ title: "Sección 1", position: 0 }],
       },

@@ -6,7 +6,7 @@ export default async function CoursesPage() {
   const user = await requireAuth();
   const result = await getCourses(user.id);
   const courses = result.success ? result.data : [];
-  const canCreate = ["ADMIN", "TEACHER", "MANAGER"].includes(user.role);
+  const canCreate = ["ADMIN", "MANAGER"].includes(user.role);
 
   return (
     <CourseCatalogView

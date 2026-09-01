@@ -50,6 +50,7 @@ export default async function CourseDetailPage({
 
   const isStaff = ["ADMIN", "TEACHER", "MANAGER"].includes(user.role);
   const canEdit = course.instructor.id === user.id || isStaff;
+  const canEnroll = ["ADMIN", "MANAGER"].includes(user.role);
 
   const isEnrolled = await prisma.enrollment.findUnique({
     where: { userId_courseId: { userId: user.id, courseId: course.id } },
@@ -318,7 +319,7 @@ export default async function CourseDetailPage({
                 courseId={course.id}
                 courseTitle={course.title}
                 people={participantResult.data.people}
-                canEdit={canEdit}
+                canEnroll={canEnroll}
               />
             </div>
           )}
