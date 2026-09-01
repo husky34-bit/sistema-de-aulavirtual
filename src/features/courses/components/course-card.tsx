@@ -12,29 +12,36 @@ export function CourseCard({ course }: CourseCardProps) {
 
   return (
     <div className="group relative flex flex-col justify-between border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#101D31] transition-all duration-200 hover:border-[#026BCA] dark:hover:border-[#00BCE4] hover:shadow-md">
-      {/* Top Banner / Image (Square & Crisp) */}
-      <div className="relative h-40 w-full overflow-hidden bg-[#00155C] border-b border-slate-200 dark:border-slate-800">
+      {/* Top Banner / Image (Square 1:1 Aspect Ratio para imágenes 280x280) */}
+      <div className="relative aspect-square w-full overflow-hidden bg-[#00155C] border-b border-slate-200 dark:border-slate-800">
         {course.imageUrl ? (
           <>
             <img
               src={course.imageUrl}
               alt={course.title}
+              width={280}
+              height={280}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00155C]/90 via-[#00155C]/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#00155C]/90 via-[#00155C]/20 to-transparent" />
           </>
         ) : (
           <div className="relative h-full w-full bg-gradient-to-br from-[#00155C] via-[#002147] to-[#0A1A3A] p-4 flex flex-col justify-between">
             <div className="flex justify-between items-start">
-              <span className="flex h-7 w-7 items-center justify-center border border-white/20 bg-white/10 text-white">
-                <BookOpenIcon size={14} />
+              <span className="flex h-8 w-8 items-center justify-center border border-white/20 bg-white/10 text-white">
+                <BookOpenIcon size={16} />
               </span>
+            </div>
+
+            <div className="flex flex-col items-center justify-center text-center opacity-70 my-auto">
+              <span className="text-2xl font-black text-white/30 tracking-widest">280×280</span>
+              <span className="text-[10px] text-slate-300 font-medium uppercase mt-0.5">Carátula Cuadrada</span>
             </div>
           </div>
         )}
 
         {/* Status Tag: Matriculado / Disponible */}
-        <div className="absolute top-2.5 left-2.5">
+        <div className="absolute top-2.5 left-2.5 z-10">
           {isEnrolled ? (
             <span className="inline-flex items-center gap-1 border border-emerald-400/40 bg-emerald-950/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300 backdrop-blur-sm">
               <span className="h-1.5 w-1.5 bg-emerald-400 animate-pulse" />
@@ -48,13 +55,13 @@ export function CourseCard({ course }: CourseCardProps) {
         </div>
 
         {/* Enrollment Count */}
-        <div className="absolute top-2.5 right-2.5 border border-white/20 bg-black/60 px-2 py-0.5 text-[10px] font-medium text-slate-200 backdrop-blur-sm">
+        <div className="absolute top-2.5 right-2.5 z-10 border border-white/20 bg-black/60 px-2 py-0.5 text-[10px] font-medium text-slate-200 backdrop-blur-sm">
           {course._count.enrollments} alumnos
         </div>
 
         {/* Category Area Badge */}
         {course.area && (
-          <div className="absolute bottom-2.5 left-2.5 border border-white/20 bg-[#00155C]/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[#00BCE4] backdrop-blur-sm">
+          <div className="absolute bottom-2.5 left-2.5 z-10 border border-white/20 bg-[#00155C]/90 px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-[#00BCE4] backdrop-blur-sm">
             {course.area}
           </div>
         )}

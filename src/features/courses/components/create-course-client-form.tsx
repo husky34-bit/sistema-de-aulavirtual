@@ -210,26 +210,28 @@ export function CreateCourseClientForm() {
           </div>
 
           <label htmlFor="imageUrl" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-            O pega una URL personalizada de imagen
+            O pega una URL personalizada de imagen (Recomendado: 280 × 280 px cuadrado)
           </label>
           <input
             id="imageUrl"
             type="url"
             value={imageUrl}
             onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://ejemplo.com/portada-curso.jpg"
+            placeholder="https://ejemplo.com/caratula-280x280.jpg"
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 transition focus:border-[#026BCA] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#026BCA]/20"
           />
         </div>
 
-        {/* Vista previa en vivo */}
+        {/* Vista previa en vivo (Cuadrada 280x280) */}
         {imageUrl && (
           <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-              Vista previa de la tarjeta:
+              Vista previa de la tarjeta (Formato 280 × 280):
             </p>
-            <div className="max-w-xs rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-md">
-              <img src={imageUrl} alt="Preview" className="h-28 w-full object-cover" />
+            <div className="w-64 rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-md">
+              <div className="aspect-square w-full overflow-hidden bg-[#00155C]">
+                <img src={imageUrl} alt="Preview" className="h-full w-full object-cover" />
+              </div>
               <div className="p-3">
                 <p className="text-xs font-bold text-[#00155C] line-clamp-1">
                   {title || "Título del curso"}
