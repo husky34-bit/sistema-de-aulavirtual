@@ -3,7 +3,8 @@ import { auth } from "@/auth";
 import Image from "next/image";
 
 export function ZenviaLogo({ variant = "light" }: { variant?: "light" | "dark" }) {
-  void variant;
+  const isDarkExplicit = variant === "dark";
+
   return (
     <Link href="/dashboard" className="group flex items-center transition-transform hover:opacity-95 active:scale-95 py-1">
       <Image
@@ -11,7 +12,11 @@ export function ZenviaLogo({ variant = "light" }: { variant?: "light" | "dark" }
         alt="Cognos Virtual"
         width={220}
         height={54}
-        className="h-9 sm:h-11 w-auto object-contain"
+        className={`h-9 sm:h-11 w-auto object-contain transition-all ${
+          isDarkExplicit
+            ? "brightness-0 invert"
+            : "dark:brightness-0 dark:invert"
+        }`}
         priority
       />
     </Link>
