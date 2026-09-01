@@ -10,6 +10,7 @@ import {
   CalendarIcon,
   AwardIcon,
   SearchIcon,
+  ShieldCheckIcon,
 } from '@/components/Icons';
 
 interface CognosNavbarProps {
@@ -26,11 +27,16 @@ export function CognosNavbar({ canManageUsers }: CognosNavbarProps) {
   const isCalendar = pathname.startsWith('/dashboard/calendar');
   const isBadges = pathname.startsWith('/dashboard/badges');
   const isSearch = pathname.startsWith('/dashboard/search');
+  const isAdminSite =
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/users') ||
+    pathname.startsWith('/dashboard/reports') ||
+    pathname.startsWith('/dashboard/settings');
 
   return (
     <div className="bg-[#343A40] text-white border-b border-[#212529] shadow-xs">
       <div className="flex w-full items-center justify-between px-4 sm:px-6 lg:px-8 text-xs sm:text-[13.5px] font-medium tracking-wide">
-        {/* Enlaces de Navegación Anteriores (Restaurados) */}
+        {/* Enlaces de Navegación */}
         <div className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto py-0.5 scrollbar-none">
           {/* Inicio */}
           <Link
@@ -123,35 +129,19 @@ export function CognosNavbar({ canManageUsers }: CognosNavbarProps) {
             <span>Buscar</span>
           </Link>
 
-          {/* Enlaces de Administrador */}
+          {/* Opción Oficial de Administrador: Administración del sitio */}
           {canManageUsers && (
-            <div className="ml-2 flex items-center gap-1 border-l border-slate-600 pl-3">
-              <Link
-                href="/dashboard/reports/corporate"
-                className="rounded-md px-2.5 py-1 text-xs font-bold text-[#00BCE4] hover:bg-white/10 transition"
-              >
-                B2B & Sedes
-              </Link>
-              <Link
-                href="/dashboard/reports/builder"
-                className="rounded-md px-2.5 py-1 text-xs font-bold text-[#ECD06F] hover:bg-white/10 transition flex items-center gap-1"
-              >
-                <BarChartIcon size={13} className="shrink-0" />
-                <span>Reportes</span>
-              </Link>
-              <Link
-                href="/admin/users"
-                className="rounded-md px-2.5 py-1 text-xs text-cyan-300 hover:bg-white/10 transition"
-              >
-                Usuarios
-              </Link>
-              <Link
-                href="/dashboard/settings/tokens"
-                className="rounded-md px-2.5 py-1 text-xs text-slate-300 hover:bg-white/10 transition"
-              >
-                API Tokens
-              </Link>
-            </div>
+            <Link
+              href="/admin"
+              className={`relative flex items-center gap-1.5 px-3 py-2.5 transition hover:text-white ${
+                isAdminSite
+                  ? 'font-bold text-white after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:bg-[#00BCE4]'
+                  : 'text-amber-300 hover:text-white'
+              }`}
+            >
+              <ShieldCheckIcon size={16} />
+              <span>Administración del sitio</span>
+            </Link>
           )}
         </div>
       </div>
