@@ -31,7 +31,7 @@ export function CognosNavbar({ canManageUsers }: CognosNavbarProps) {
 
   return (
     <div className="bg-[#343A40] text-white border-b border-[#212529] shadow-xs">
-      <div className="mx-auto flex w-full max-w-[1780px] items-center justify-between px-4 sm:px-8 lg:px-12 2xl:px-16 text-xs sm:text-[13.5px] font-medium tracking-wide">
+      <div className="flex w-full items-center justify-between px-4 sm:px-6 lg:px-8 text-xs sm:text-[13.5px] font-medium tracking-wide">
         {/* Enlaces de Navegación Anteriores (Restaurados) */}
         <div className="flex items-center gap-0.5 sm:gap-1 overflow-x-auto py-0.5 scrollbar-none">
           {/* Inicio */}
