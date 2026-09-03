@@ -2,23 +2,22 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { SearchIcon, CheckCircleIcon, XIcon } from '@/components/Icons';
+import { SearchIcon, CheckCircleIcon, XIcon, UploadIcon } from '@/components/Icons';
+import { BulkImportModal } from '@/features/users/components/bulk-import-modal';
 
 export type AdminTabKey =
-  | 'general'
   | 'usuarios'
   | 'cursos'
   | 'calificaciones'
-  | 'extensiones'
-  | 'apariencia'
-  | 'servidor'
   | 'informes'
-  | 'desarrollo';
+  | 'sistema';
 
 interface AdminLink {
   label: string;
   href?: string;
   badge?: string;
+  action?: 'bulk-import' | 'info';
+  description?: string;
 }
 
 interface AdminSection {
@@ -31,492 +30,293 @@ interface TabData {
   key: AdminTabKey;
   label: string;
   title: string;
+  subtitle: string;
   sections: AdminSection[];
 }
 
-const TABS_DATA: TabData[] = [
-  {
-    key: 'general',
-    label: 'General',
-    title: 'General',
-    sections: [
-      {
-        title: 'Analítica',
-        titleColor: 'navy',
-        links: [
-          { label: 'Modelos analíticos' },
-          { label: 'Ajustes analíticos' },
-        ],
-      },
-      {
-        title: 'Competencias',
-        titleColor: 'amber',
-        links: [
-          { label: 'Ajustes de competencias' },
-          { label: 'Marcos de competencias' },
-          { label: 'Plantillas de plan de aprendizaje' },
-        ],
-      },
-      {
-        title: 'Insignias',
-        titleColor: 'amber',
-        links: [
-          { label: 'Ajustes de insignias', href: '/dashboard/badges' },
-          { label: 'Gestionar insignias', href: '/dashboard/badges' },
-          { label: 'Añadir una nueva insignia', href: '/dashboard/badges' },
-        ],
-      },
-      {
-        title: 'H5P',
-        titleColor: 'amber',
-        links: [{ label: 'Gestionar tipos de contenido H5P' }],
-      },
-      {
-        title: 'Licencia',
-        titleColor: 'amber',
-        links: [{ label: 'Ajustes de licencia' }],
-      },
-      {
-        title: 'Ubicación',
-        titleColor: 'amber',
-        links: [
-          { label: 'Ajustes de ubicación' },
-          { label: 'Zonas horarias' },
-        ],
-      },
-      {
-        title: 'Idiomas',
-        titleColor: 'amber',
-        links: [
-          { label: 'Ajustes de idioma' },
-          { label: 'Paquetes de idioma' },
-        ],
-      },
-      {
-        title: 'Seguridad',
-        titleColor: 'amber',
-        links: [
-          { label: 'Políticas de seguridad del sitio' },
-          { label: 'Protección HTTP' },
-          { label: 'Notificaciones de administrador' },
-        ],
-      },
-    ],
-  },
+const MODERN_TABS: TabData[] = [
   {
     key: 'usuarios',
-    label: 'Usuarios',
-    title: 'Usuarios',
+    label: 'Usuarios y Matrículas',
+    title: 'Gestión de Usuarios y Matrículas',
+    subtitle: 'Administración de cuentas, asignación de roles, cohortes institucionales y alta masiva.',
     sections: [
       {
-        title: 'Cuentas',
+        title: 'Cuentas y Accesos',
         titleColor: 'amber',
         links: [
-          { label: 'Examinar lista de usuarios', href: '/users' },
-          { label: 'Acciones de usuario masivas', href: '/users' },
-          { label: 'Crear un nuevo usuario', href: '/users' },
-          { label: 'Gestión de usuarios', href: '/users' },
-          { label: 'Preferencias predeterminadas del usuario' },
-          { label: 'Campos de perfil del usuario' },
-          { label: 'Cohortes', href: '/admin/cohorts' },
-          { label: 'Campos personalizados de cohorte', href: '/admin/cohorts' },
-          { label: 'Subir usuarios', href: '/users' },
-          { label: 'Subir imágenes de los usuarios' },
+          {
+            label: 'Examinar lista de usuarios',
+            href: '/users',
+            description: 'Directorio completo con buscador, roles y estado de acceso.',
+          },
+          {
+            label: 'Crear un nuevo usuario',
+            href: '/users',
+            description: 'Formulario de registro individual de estudiante o docente.',
+          },
+          {
+            label: 'Subir usuarios masivamente (CSV)',
+            action: 'bulk-import',
+            badge: 'Herramienta Activa',
+            description: 'Carga masiva mediante archivo CSV o copia de datos.',
+          },
+          {
+            label: 'Gestión de roles y permisos (Admin, Docente, Estudiante)',
+            href: '/users',
+            description: 'Asignación de privilegios de acceso institucional.',
+          },
         ],
       },
       {
-        title: 'Permisos',
+        title: 'Grupos y Cohortes',
         titleColor: 'amber',
         links: [
-          { label: 'Políticas de usuario' },
-          { label: 'Administradores del sitio', href: '/users' },
-          { label: 'Definir roles', href: '/users' },
-          { label: 'Asignar roles de sistema', href: '/users' },
-          { label: 'Comprobar los permisos del sistema' },
-          { label: 'Asignaciones no soportadas de rol.' },
-          { label: 'Asignar roles de usuario a cohorte', href: '/admin/cohorts' },
-          { label: 'Informe de permisos' },
+          {
+            label: 'Administración de Cohortes',
+            href: '/admin/cohorts',
+            description: 'Agrupamiento de alumnos por empresa, sede o promoción.',
+          },
+          {
+            label: 'Sincronización masiva de cohortes a cursos',
+            href: '/admin/cohorts',
+            description: 'Matriculación de grupos enteros en materias con un solo clic.',
+          },
         ],
       },
       {
-        title: 'Privacidad y Políticas',
+        title: 'Políticas de Seguridad y Privacidad',
         titleColor: 'amber',
         links: [
-          { label: 'Opciones de privacidad' },
-          { label: 'Configuraciones de Política' },
-          { label: 'Solicitudes de datos' },
-          { label: 'Registro de datos' },
-          { label: 'Eliminación de datos' },
-          { label: 'Registro de privacidad de plugins' },
+          {
+            label: 'Políticas de contraseñas y sesiones activas',
+            href: '/admin/settings',
+            description: 'Requisitos de seguridad y tiempo de expiración.',
+          },
+          {
+            label: 'Opciones de privacidad y retención de datos',
+            action: 'info',
+            description: 'Políticas institucionales de custodia de información académica.',
+          },
         ],
       },
     ],
   },
   {
     key: 'cursos',
-    label: 'Cursos',
-    title: 'Cursos',
+    label: 'Cursos y Programas',
+    title: 'Administración de Cursos y Programas',
+    subtitle: 'Creación oficial de asignaturas, asignación de docentes, categorías y módulos.',
     sections: [
       {
-        title: 'Cursos',
+        title: 'Gestión Académica',
         titleColor: 'navy',
         links: [
-          { label: 'Administrar cursos y categorías', href: '/dashboard/courses' },
-          { label: 'Añadir una categoría', href: '/dashboard/courses' },
-          { label: 'Crear un nuevo curso', href: '/dashboard/courses/new' },
-          { label: 'Restaurar curso' },
-          { label: 'Descargar contenido del curso' },
-          { label: 'Solicitud de curso' },
-          { label: 'Solicitudes pendientes' },
-          { label: 'Subir cursos' },
+          {
+            label: '+ Crear un nuevo curso oficial',
+            href: '/dashboard/courses/new',
+            badge: 'Solo Administrador',
+            description: 'Alta de curso con docente asignado, portada 280x280 y slug.',
+          },
+          {
+            label: 'Catálogo y administración de cursos',
+            href: '/dashboard/courses',
+            description: 'Gestión de contenidos, secciones, cuestionarios y foros.',
+          },
+          {
+            label: 'Categorías y áreas de estudio (Ciberseguridad, Redes, Cloud, IA)',
+            href: '/dashboard/courses',
+            description: 'Organización temática del catálogo formativo.',
+          },
         ],
       },
       {
-        title: 'Configuración por defecto',
+        title: 'Configuración de Contenidos',
         titleColor: 'amber',
         links: [
-          { label: 'Ajustes por defecto del curso' },
-          { label: 'Finalización de actividad por defecto' },
-          { label: 'Campos personalizados del curso' },
+          {
+            label: 'Criterios de finalización y seguimiento de módulos',
+            action: 'info',
+            description: 'Reglas de avance y desbloqueo progresivo de lecciones.',
+          },
+          {
+            label: 'Banco de preguntas institucional',
+            href: '/dashboard/courses',
+            description: 'Preguntas de opción múltiple, verdadero/falso y emparejamiento.',
+          },
         ],
       },
       {
-        title: 'Grupos',
+        title: 'Respaldo y Duplicación',
         titleColor: 'amber',
         links: [
-          { label: 'Campos personalizados del grupo' },
-          { label: 'Campos personalizados del agrupamiento' },
-        ],
-      },
-      {
-        title: 'Selector de actividades',
-        titleColor: 'amber',
-        links: [
-          { label: 'Configuración del selector de actividades' },
-          { label: 'Actividades recomendadas' },
-        ],
-      },
-      {
-        title: 'Copias de seguridad',
-        titleColor: 'amber',
-        links: [
-          { label: 'Configuración por defecto de la copia de seguridad' },
-          { label: 'Valores generales predeterminados de importación' },
-          { label: 'Copia de seguridad programada' },
-          { label: 'Valores por defecto generales de restauración' },
-          { label: 'Copia de seguridad/restauración asincrónicos' },
+          {
+            label: 'Copias de seguridad de cursos y contenidos',
+            action: 'info',
+            description: 'Respaldos automáticos de estructura y evaluaciones en base de datos.',
+          },
         ],
       },
     ],
   },
   {
     key: 'calificaciones',
-    label: 'Calificaciones',
-    title: 'Calificaciones',
+    label: 'Calificaciones y Actas',
+    title: 'Centro de Calificaciones y Actas',
+    subtitle: 'Supervisión de notas, libro del calificador y generación de actas de aprobación.',
     sections: [
       {
-        title: 'Calificaciones',
+        title: 'Libro de Calificaciones',
         titleColor: 'navy',
         links: [
-          { label: 'Ajustes generales', href: '/dashboard/grades' },
-          { label: 'Ajustes de categoría de calificación' },
-          { label: 'Ajustes de ítems de calificación' },
-          { label: 'Escalas' },
-          { label: 'Letras' },
+          {
+            label: 'Informe del calificador global',
+            href: '/dashboard/grades',
+            badge: 'Matriz en Vivo',
+            description: 'Notas consolidadas de cuestionarios, laboratorios y tareas.',
+          },
+          {
+            label: 'Exportar actas oficiales de notas (CSV / Excel)',
+            href: '/dashboard/grades',
+            description: 'Descarga directa de actas académicas para archivo o firma.',
+          },
         ],
       },
       {
-        title: 'Ajustes de informe',
+        title: 'Criterios de Aprobación',
         titleColor: 'amber',
         links: [
-          { label: 'Informe del calificador', href: '/dashboard/grades' },
-          { label: 'Historial de calificación', href: '/dashboard/grades' },
-          { label: 'Informe general', href: '/dashboard/grades' },
-          { label: 'Usuario', href: '/dashboard/grades' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'extensiones',
-    label: 'Extensiones',
-    title: 'Extensiones',
-    sections: [
-      {
-        title: 'Extensiones',
-        titleColor: 'navy',
-        links: [
-          { label: 'Instalar complementos' },
-          { label: 'Vista general de extensiones' },
-        ],
-      },
-      {
-        title: 'Autenticación',
-        titleColor: 'amber',
-        links: [
-          { label: 'Gestionar la autenticación' },
-          { label: 'Cuentas manuales' },
-          { label: 'Identificación basada en Email' },
-        ],
-      },
-      {
-        title: 'Banco de contenido',
-        titleColor: 'amber',
-        links: [{ label: 'Administrar tipos de contenido' }],
-      },
-      {
-        title: 'Bloques',
-        titleColor: 'amber',
-        links: [
-          { label: 'Gestionar bloques' },
-          { label: 'Cursos' },
-          { label: 'Cursos a los que se ha accedido recientemente' },
-          { label: 'Cursos destacados' },
-          { label: 'Enlaces de sección' },
-          { label: 'Resultados de la actividad' },
-          { label: 'Revisión de la accesibilidad' },
-          { label: 'Texto' },
-          { label: 'Usuarios en línea' },
-          { label: 'Vista general de curso' },
-        ],
-      },
-      {
-        title: 'Buscar',
-        titleColor: 'amber',
-        links: [
-          { label: 'Administrar búsqueda global' },
-          { label: 'Áreas de búsqueda' },
-          { label: 'Solr' },
-        ],
-      },
-      {
-        title: 'Caché',
-        titleColor: 'amber',
-        links: [
-          { label: 'Configuración' },
-          { label: 'Desempeño de prueba' },
-          { label: 'Uso de caché' },
-          { label: 'Almacenes de caché' },
-          { label: 'Caché de usuario de APC (APCu)' },
-          { label: 'Redis' },
-        ],
-      },
-      {
-        title: 'Campos personalizados',
-        titleColor: 'amber',
-        links: [{ label: 'Administrar tipos de campos personalizados' }],
-      },
-      {
-        title: 'Complementos del banco de preguntas',
-        titleColor: 'amber',
-        links: [
-          { label: 'Administrar los complementos del banco de preguntas' },
-          { label: 'Ordenamiento de columnas' },
-          { label: 'Campos personalizados de preguntas' },
-        ],
-      },
-      {
-        title: 'Comportamientos de las preguntas',
-        titleColor: 'amber',
-        links: [{ label: 'Gestionar comportamientos de preguntas.' }],
-      },
-      {
-        title: 'Configuración del backend de aprendizaje automático',
-        titleColor: 'amber',
-        links: [{ label: 'Backend de aprendizaje automático de Python' }],
-      },
-      {
-        title: 'Convertidores de documentos',
-        titleColor: 'amber',
-        links: [{ label: 'Gestionar convertidores de documentos' }],
-      },
-      {
-        title: 'Editores de texto',
-        titleColor: 'amber',
-        links: [
-          { label: 'Gestionar editores' },
-          { label: 'Editor HTML Atto' },
-          { label: 'Opciones de la barra herramienta de Atto' },
-          { label: 'Colapsar opciones de configuración de la barra de herramientas' },
-          { label: 'Opciones del editor de ecuaciones' },
-          { label: 'RecordRTC (GrabarRTC)' },
-          { label: 'Opciones de tabla' },
-          { label: 'Editor TinyMCE' },
-          { label: 'Ajustes generales' },
-          { label: 'Configuracines del editor de ecuación' },
-          { label: 'Lambda Content Editor Plugin' },
-          { label: 'TinyMCE Premium' },
-          { label: 'RecordRTC' },
-        ],
-      },
-      {
-        title: 'Extensiones locales',
-        titleColor: 'amber',
-        links: [{ label: 'Gestionar extensiones locales' }],
-      },
-    ],
-  },
-  {
-    key: 'apariencia',
-    label: 'Apariencia',
-    title: 'Apariencia',
-    sections: [
-      {
-        title: 'Temas',
-        titleColor: 'navy',
-        links: [
-          { label: 'Selector de temas' },
-          { label: 'Ajustes de tema' },
-          { label: 'Tema Cognos Virtual (Predeterminado)' },
-          { label: 'Modo Oscuro / Modo Claro' },
-        ],
-      },
-      {
-        title: 'Logos e Identidad',
-        titleColor: 'amber',
-        links: [
-          { label: 'Logotipo principal del sitio' },
-          { label: 'Logotipo compacto / Negativo' },
-          { label: 'Favicon del sitio' },
-        ],
-      },
-      {
-        title: 'Navegación',
-        titleColor: 'amber',
-        links: [
-          { label: 'Ajustes de la barra de navegación' },
-          { label: 'Elementos del menú principal' },
-          { label: 'Página de inicio del sitio' },
-        ],
-      },
-      {
-        title: 'HTML adicional',
-        titleColor: 'amber',
-        links: [
-          { label: 'Dentro de HEAD' },
-          { label: 'Al inicio de BODY' },
-          { label: 'Al pie de página' },
-        ],
-      },
-    ],
-  },
-  {
-    key: 'servidor',
-    label: 'Servidor',
-    title: 'Servidor',
-    sections: [
-      {
-        title: 'Servicios web y API',
-        titleColor: 'navy',
-        links: [
-          { label: 'Tokens de acceso externos (API REST)', href: '/dashboard/settings/tokens' },
-          { label: 'Protocolos activos (REST / JSON)', href: '/dashboard/settings/tokens' },
-          { label: 'Gestionar servicios externos' },
-        ],
-      },
-      {
-        title: 'Tareas del Sistema',
-        titleColor: 'amber',
-        links: [
-          { label: 'Tareas programadas (Cron)' },
-          { label: 'Ejecución en segundo plano' },
-        ],
-      },
-      {
-        title: 'Entorno y Rendimiento',
-        titleColor: 'amber',
-        links: [
-          { label: 'Información del entorno' },
-          { label: 'Versión del sistema y librerías' },
-          { label: 'Rendimiento y caché de consultas' },
-        ],
-      },
-      {
-        title: 'Limpieza y Mantenimiento',
-        titleColor: 'amber',
-        links: [
-          { label: 'Limpieza de base de datos' },
-          { label: 'Purgar todas las cachés' },
+          {
+            label: 'Escala de evaluación y nota mínima de aprobación (51 / 100)',
+            action: 'info',
+            description: 'Puntajes de corte para aprobación de materias y certificados.',
+          },
+          {
+            label: 'Acreditación y certificados automáticos',
+            action: 'info',
+            description: 'Emisión de certificados digitales con código QR de verificación.',
+          },
         ],
       },
     ],
   },
   {
     key: 'informes',
-    label: 'Informes',
-    title: 'Informes',
+    label: 'Informes & Portal B2B',
+    title: 'Informes Institucionales y Portal B2B',
+    subtitle: 'Métricas de rendimiento, portal corporativo para empresas clientes y sucursales.',
     sections: [
       {
-        title: 'Generador de Informes',
+        title: 'Analítica Académica',
         titleColor: 'navy',
         links: [
-          { label: 'Generador de reportes personalizados', href: '/dashboard/reports/builder' },
-          { label: 'Plantillas de exportación CSV / Excel', href: '/dashboard/reports/builder' },
+          {
+            label: 'Generador de reportes personalizados',
+            href: '/dashboard/reports/builder',
+            description: 'Reportes tabulares con filtros por cursos, fechas y estados.',
+          },
+          {
+            label: 'Plantillas de exportación de datos',
+            href: '/dashboard/reports/builder',
+            description: 'Descargas en formato CSV compatible con Excel y PowerBI.',
+          },
         ],
       },
       {
-        title: 'Portal Corporativo B2B y Sedes',
+        title: 'Clientes Corporativos y Sedes',
         titleColor: 'amber',
         links: [
-          { label: 'Monitoreo por sucursales y franquicias', href: '/dashboard/reports/corporate' },
-          { label: 'Métricas de empresas clientes', href: '/dashboard/reports/corporate' },
-        ],
-      },
-      {
-        title: 'Registros y Auditoría',
-        titleColor: 'amber',
-        links: [
-          { label: 'Registro de auditoría (Audit Log)', href: '/admin/audit-log' },
-          { label: 'Registros activos de usuarios' },
-          { label: 'Informe de actividad en vivo' },
+          {
+            label: 'Portal Corporativo B2B y Sedes Regionales',
+            href: '/dashboard/reports/corporate',
+            badge: 'Multi-sede',
+            description: 'Monitoreo de capacitación para empresas y franquicias asociadas.',
+          },
+          {
+            label: 'Reporte de asistencia y participación en clases en vivo',
+            href: '/dashboard/reports/builder',
+            description: 'Registro de asistencia a sesiones de Zoom y actividades.',
+          },
         ],
       },
     ],
   },
   {
-    key: 'desarrollo',
-    label: 'Desarrollo',
-    title: 'Desarrollo',
+    key: 'sistema',
+    label: 'Sistema, API y Seguridad',
+    title: 'Configuración del Sistema, API y Seguridad',
+    subtitle: 'Control de accesos externos, auditoría de eventos y ajustes globales de marca.',
     sections: [
       {
-        title: 'Depuración',
+        title: 'Integraciones y API',
         titleColor: 'navy',
         links: [
-          { label: 'Mensajes de depuración' },
-          { label: 'Información de rendimiento' },
-          { label: 'Registro de errores' },
+          {
+            label: 'Tokens de integración externa (API REST v1)',
+            href: '/dashboard/settings/tokens',
+            description: 'Claves seguras para conectar CRMs, sistemas de cobro y ERPs.',
+          },
+          {
+            label: 'Documentación de endpoints de la API REST',
+            href: '/dashboard/settings/tokens',
+            description: 'Especificación de endpoints para sincronización de alumnos y notas.',
+          },
         ],
       },
       {
-        title: 'Herramientas de API',
+        title: 'Auditoría y Seguridad',
         titleColor: 'amber',
         links: [
-          { label: 'Simulador de llamadas REST', href: '/dashboard/settings/tokens' },
-          { label: 'Esquemas OpenAPI / Swagger' },
+          {
+            label: 'Registro de Auditoría (Audit Log)',
+            href: '/admin/audit-log',
+            badge: 'Trazabilidad',
+            description: 'Historial detallado de eventos, cambios de notas y accesos.',
+          },
+          {
+            label: 'Configuración general de la plataforma',
+            href: '/admin/settings',
+            description: 'Parámetros del sitio, nombre de la institución y variables.',
+          },
         ],
       },
       {
-        title: 'Pruebas e Integración',
+        title: 'Estado de la Plataforma',
         titleColor: 'amber',
         links: [
-          { label: 'Simulación E2E de cursos' },
-          { label: 'Prueba de envío de correos y webhooks' },
+          {
+            label: 'Base de datos PostgreSQL & Prisma ORM',
+            action: 'info',
+            description: 'Conexión segura y optimizada con pooling de conexiones.',
+          },
+          {
+            label: 'ZenviaLMS v2.5 · Cognos Capacitación',
+            action: 'info',
+            description: 'Arquitectura moderna sobre Next.js 15, React 19 y TypeScript.',
+          },
         ],
       },
     ],
   },
 ];
 
-export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?: AdminTabKey }) {
+export function SiteAdministrationView({
+  initialTab = 'usuarios',
+  courses = [],
+}: {
+  initialTab?: AdminTabKey;
+  courses?: Array<{ id: string; title: string }>;
+}) {
   const [activeTabKey, setActiveTabKey] = useState<AdminTabKey>(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
   const [modalInfo, setModalInfo] = useState<string | null>(null);
+  const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
 
   const activeTab = useMemo(() => {
-    return TABS_DATA.find((t) => t.key === activeTabKey) ?? TABS_DATA[2]; // Default to Cursos
+    return MODERN_TABS.find((t) => t.key === activeTabKey) ?? MODERN_TABS[0];
   }, [activeTabKey]);
 
-  // Búsqueda en todos los módulos cuando hay texto en searchQuery
+  // Búsqueda en tiempo real entre todas las opciones
   const searchResults = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return null;
@@ -528,11 +328,12 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
       link: AdminLink;
     }> = [];
 
-    TABS_DATA.forEach((tab) => {
+    MODERN_TABS.forEach((tab) => {
       tab.sections.forEach((sec) => {
         sec.links.forEach((link) => {
           if (
             link.label.toLowerCase().includes(q) ||
+            (link.description && link.description.toLowerCase().includes(q)) ||
             sec.title.toLowerCase().includes(q) ||
             tab.label.toLowerCase().includes(q)
           ) {
@@ -550,37 +351,50 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
     return results;
   }, [searchQuery]);
 
-  const handleNonLinkClick = (e: React.MouseEvent, label: string) => {
-    e.preventDefault();
-    setModalInfo(label);
+  const handleLinkClick = (e: React.MouseEvent, link: AdminLink) => {
+    if (link.action === 'bulk-import') {
+      e.preventDefault();
+      setIsBulkImportOpen(true);
+      return;
+    }
+
+    if (link.action === 'info' || !link.href) {
+      e.preventDefault();
+      setModalInfo(link.label);
+    }
   };
 
   return (
     <div className="space-y-6 font-poppins text-[#212529] dark:text-slate-200">
-      {/* Buscador Superior */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#00155C] dark:text-white">
-          Administración del sitio
-        </h1>
+      {/* Encabezado y Buscador */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#00155C] dark:text-white">
+            Administración del sitio
+          </h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Panel centralizado con las herramientas operativas esenciales para la administración de Cognos LMS.
+          </p>
+        </div>
 
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-80">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar ajuste o enlace..."
-            className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#101D31] px-3 py-1.5 pr-8 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-[#026BCA] focus:outline-none"
+            placeholder="Buscar herramienta o módulo..."
+            className="w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-[#101D31] px-3.5 py-2 pr-9 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:border-[#026BCA] focus:outline-none"
           />
-          <span className="absolute right-2.5 top-2 text-slate-400">
+          <span className="absolute right-3 top-2.5 text-slate-400">
             <SearchIcon size={14} />
           </span>
         </div>
       </div>
 
-      {/* Barra de Pestañas Moodle Clásica */}
+      {/* Barra de 5 Pestañas Esenciales (Estilo Moodle Oficial) */}
       <div className="border-b border-slate-200 dark:border-slate-700 overflow-x-auto scrollbar-none">
-        <nav className="flex items-center space-x-1 sm:space-x-3 text-xs sm:text-[13px]">
-          {TABS_DATA.map((tab) => {
+        <nav className="flex items-center space-x-2 sm:space-x-4 text-xs sm:text-[13.5px]">
+          {MODERN_TABS.map((tab) => {
             const isActive = activeTabKey === tab.key && !searchQuery;
             return (
               <button
@@ -590,10 +404,10 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
                   setActiveTabKey(tab.key);
                   setSearchQuery('');
                 }}
-                className={`relative px-2.5 sm:px-3 py-2 whitespace-nowrap transition-colors ${
+                className={`relative px-3 py-2.5 whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'font-bold text-[#00155C] dark:text-white border-b-2 border-[#00155C] dark:border-[#00BCE4]'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-[#00155C] dark:hover:text-white font-normal'
+                    ? 'font-bold text-[#00155C] dark:text-white border-b-[3px] border-[#00155C] dark:border-[#00BCE4]'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-[#00155C] dark:hover:text-white font-medium'
                 }`}
               >
                 {tab.label}
@@ -603,19 +417,19 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
         </nav>
       </div>
 
-      {/* Contenido Principal de la Pestaña */}
-      <div className="bg-white dark:bg-[#101D31] border border-slate-200 dark:border-slate-800 rounded-xs p-6 sm:p-8 min-h-[420px]">
-        {/* Vista si hay Búsqueda Activa */}
+      {/* Contenedor de Opciones */}
+      <div className="bg-white dark:bg-[#101D31] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 min-h-[400px]">
+        {/* Resultados de Búsqueda */}
         {searchResults ? (
           <div>
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 mb-4">
               <h2 className="text-base font-bold text-[#00155C] dark:text-white">
-                Resultados de búsqueda ({searchResults.length})
+                Opciones encontradas ({searchResults.length})
               </h2>
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="text-xs text-[#D27C00] dark:text-amber-400 hover:underline"
+                className="text-xs text-[#D27C00] dark:text-amber-400 hover:underline font-semibold"
               >
                 Limpiar búsqueda
               </button>
@@ -623,31 +437,39 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
 
             {searchResults.length === 0 ? (
               <p className="text-xs text-slate-500 py-6">
-                No se encontraron opciones que coincidan con &quot;{searchQuery}&quot;.
+                No se encontraron opciones para &quot;{searchQuery}&quot;.
               </p>
             ) : (
               <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {searchResults.map((res, idx) => (
-                  <div key={idx} className="py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <div
+                    key={idx}
+                    className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+                  >
                     <div>
                       {res.link.href ? (
                         <Link
                           href={res.link.href}
-                          className="text-xs sm:text-[13px] font-semibold text-[#D27C00] dark:text-amber-400 hover:underline"
+                          className="text-xs sm:text-[13.5px] font-bold text-[#D27C00] dark:text-amber-400 hover:underline"
                         >
                           {res.link.label}
                         </Link>
                       ) : (
                         <button
                           type="button"
-                          onClick={(e) => handleNonLinkClick(e, res.link.label)}
-                          className="text-xs sm:text-[13px] font-semibold text-[#D27C00] dark:text-amber-400 hover:underline text-left"
+                          onClick={(e) => handleLinkClick(e, res.link)}
+                          className="text-xs sm:text-[13.5px] font-bold text-[#D27C00] dark:text-amber-400 hover:underline text-left"
                         >
                           {res.link.label}
                         </button>
                       )}
+                      {res.link.description && (
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          {res.link.description}
+                        </p>
+                      )}
                     </div>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] font-medium text-slate-400 shrink-0">
                       {res.tabLabel} &gt; {res.sectionTitle}
                     </span>
                   </div>
@@ -656,17 +478,22 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
             )}
           </div>
         ) : (
-          /* Vista Normal por Pestaña */
+          /* Vista Normal de la Pestaña Activa */
           <div>
-            {/* Título Principal de la Pestaña en Azul Marino */}
-            <h2 className="text-xl sm:text-2xl font-bold text-[#00155C] dark:text-white mb-6">
-              {activeTab.title}
-            </h2>
+            {/* Título y Subtítulo de la Pestaña */}
+            <div className="mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
+              <h2 className="text-lg sm:text-xl font-bold text-[#00155C] dark:text-white">
+                {activeTab.title}
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {activeTab.subtitle}
+              </p>
+            </div>
 
-            {/* Listado de Secciones con Columnas Moodle */}
+            {/* Columnas Estilo Moodle */}
             <div className="divide-y divide-slate-200 dark:divide-slate-800">
               {activeTab.sections.map((section, idx) => {
-                const isNavyTitle = section.titleColor === 'navy';
+                const isNavy = section.titleColor === 'navy';
                 return (
                   <div
                     key={section.title + idx}
@@ -676,7 +503,7 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
                     <div className="w-full md:w-1/3 lg:w-1/4 pr-4 mb-3 md:mb-0">
                       <h3
                         className={`text-base sm:text-lg font-bold ${
-                          isNavyTitle
+                          isNavy
                             ? 'text-[#00155C] dark:text-white'
                             : 'text-[#D27C00] dark:text-amber-400'
                         }`}
@@ -685,18 +512,33 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
                       </h3>
                     </div>
 
-                    {/* Columna Derecha: Enlaces color Ámbar/Mostaza Moodle */}
-                    <div className="w-full md:w-2/3 lg:w-3/4 space-y-1.5">
+                    {/* Columna Derecha: Enlaces y Acciones */}
+                    <div className="w-full md:w-2/3 lg:w-3/4 space-y-3">
                       {section.links.map((link, lIdx) => {
-                        if (link.href) {
+                        const content = (
+                          <div className="group">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs sm:text-[13.5px] font-medium text-[#D27C00] dark:text-amber-400 group-hover:underline leading-relaxed">
+                                {link.label}
+                              </span>
+                              {link.badge && (
+                                <span className="inline-flex rounded-full bg-blue-50 dark:bg-blue-950 px-2 py-0.5 text-[10px] font-bold text-[#026BCA] dark:text-[#00BCE4] border border-blue-200 dark:border-blue-900">
+                                  {link.badge}
+                                </span>
+                              )}
+                            </div>
+                            {link.description && (
+                              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                                {link.description}
+                              </p>
+                            )}
+                          </div>
+                        );
+
+                        if (link.href && link.action !== 'bulk-import') {
                           return (
                             <div key={link.label + lIdx}>
-                              <Link
-                                href={link.href}
-                                className="inline-block text-xs sm:text-[13px] text-[#D27C00] dark:text-amber-400 hover:text-[#A86200] dark:hover:text-amber-300 hover:underline transition-colors leading-relaxed"
-                              >
-                                {link.label}
-                              </Link>
+                              <Link href={link.href}>{content}</Link>
                             </div>
                           );
                         }
@@ -705,10 +547,10 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
                           <div key={link.label + lIdx}>
                             <button
                               type="button"
-                              onClick={(e) => handleNonLinkClick(e, link.label)}
-                              className="text-left text-xs sm:text-[13px] text-[#D27C00] dark:text-amber-400 hover:text-[#A86200] dark:hover:text-amber-300 hover:underline transition-colors leading-relaxed"
+                              onClick={(e) => handleLinkClick(e, link)}
+                              className="text-left w-full cursor-pointer"
                             >
-                              {link.label}
+                              {content}
                             </button>
                           </div>
                         );
@@ -722,20 +564,27 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
         )}
       </div>
 
-      {/* Modal Informativo para Ajustes con Valor por Defecto Activo */}
+      {/* Modal de Importación Masiva de Estudiantes (CSV) */}
+      <BulkImportModal
+        isOpen={isBulkImportOpen}
+        onClose={() => setIsBulkImportOpen(false)}
+        courses={courses}
+      />
+
+      {/* Modal Informativo para Ajustes Activos */}
       {modalInfo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white dark:bg-[#101D31] border border-slate-200 dark:border-slate-800 p-6 shadow-xl space-y-4 font-poppins">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-poppins">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-[#101D31] border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-4">
             <div className="flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950 text-[#026BCA] dark:text-[#00BCE4]">
                   <CheckCircleIcon size={18} />
                 </span>
                 <div>
                   <h4 className="text-sm font-bold text-[#00155C] dark:text-white">
                     {modalInfo}
                   </h4>
-                  <span className="text-[11px] text-slate-500">Configuración del sitio</span>
+                  <span className="text-[11px] text-slate-500">Parámetro Activo</span>
                 </div>
               </div>
               <button
@@ -748,7 +597,7 @@ export function SiteAdministrationView({ initialTab = 'cursos' }: { initialTab?:
             </div>
 
             <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              El parámetro <strong>&quot;{modalInfo}&quot;</strong> se encuentra activo con la configuración óptima predeterminada del entorno Cognos LMS. Puedes modificar este valor directamente en{' '}
+              El módulo <strong>&quot;{modalInfo}&quot;</strong> se encuentra operando bajo las configuraciones predeterminadas de alto rendimiento de Cognos LMS. Puedes ajustar las variables maestras en:{' '}
               <Link
                 href="/admin/settings"
                 onClick={() => setModalInfo(null)}

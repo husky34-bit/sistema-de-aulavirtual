@@ -1,8 +1,12 @@
 import { requireRole } from "@/lib/auth-helpers";
-import { SiteAdministrationView, AdminTabKey } from "@/features/admin/components/site-administration-view";
+import { prisma } from "@/lib/prisma";
+import {
+  SiteAdministrationView,
+  AdminTabKey,
+} from "@/features/admin/components/site-administration-view";
 
 export const metadata = {
-  title: "Administración del Sitio",
+  title: "Administración del Sitio · Cognos LMS",
 };
 
 export default async function AdminSitePage({
@@ -14,20 +18,23 @@ export default async function AdminSitePage({
   const { tab } = await searchParams;
 
   const validTabs: AdminTabKey[] = [
-    "general",
     "usuarios",
     "cursos",
     "calificaciones",
-    "extensiones",
-    "apariencia",
-    "servidor",
     "informes",
-    "desarrollo",
+    "sistema",
   ];
 
   const initialTab: AdminTabKey = validTabs.includes(tab as AdminTabKey)
     ? (tab as AdminTabKey)
-    : "cursos";
+    : "usuarios";
 
-  return <SiteAdministrationView initialTab={initialTab} />;
+  const courses = await prisma.course.findMany({
+    select: { id: true, title: true },
+    orderBy: { title: "asc" },
+  });
+
+  return (
+    <SiteAdministrationView initialTab={initialTab} courses={courses} />
+  );
 }
