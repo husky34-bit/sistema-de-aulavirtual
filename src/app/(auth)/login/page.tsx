@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import LoginForm from "@/features/auth/components/LoginForm";
 import { auth } from "@/auth";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión · Cognos Virtual",
@@ -35,11 +34,7 @@ export default async function LoginPage() {
       <footer className="bg-white border-t border-slate-200 py-4 px-6 text-xs text-slate-600 z-10">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
           <div className="text-slate-500">
-            Usted no se ha identificado. (
-            <Link href="/" className="text-[#026BCA] hover:underline font-medium">
-              Página Principal
-            </Link>
-            )
+            Usted no se ha identificado.
           </div>
           <div className="flex flex-wrap gap-4 items-center justify-center">
             <span className="text-[#026BCA] hover:underline cursor-pointer">
