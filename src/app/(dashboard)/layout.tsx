@@ -15,7 +15,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const sessionUser = await getCurrentUser();
-  const canManageUsers = sessionUser?.role === "ADMIN";
+  const canManageUsers = sessionUser?.role === "ADMIN" || sessionUser?.role === "MANAGER";
 
   const user = sessionUser?.id
     ? await prisma.user.findUnique({

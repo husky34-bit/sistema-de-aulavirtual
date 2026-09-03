@@ -29,6 +29,7 @@ export function MobileNav({ canManageUsers }: { canManageUsers?: boolean }) {
 
   if (canManageUsers) {
     links.push(
+      { href: "/admin", label: "🛡️ Administración del sitio" },
       { href: "/users", label: "Usuarios" },
       { href: "/admin/cohorts", label: "Cohortes" },
       { href: "/admin/settings", label: "Configuración" },
